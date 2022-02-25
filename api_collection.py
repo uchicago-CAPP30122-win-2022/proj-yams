@@ -68,5 +68,3 @@ def collect_data(regressors, limit=None):
         # Join Pandas DataFrames by "Community Area Name"
     
     return reg_table
-
-
