@@ -48,7 +48,6 @@ build_perm_df.to_file("new_build_perm.geojson", driver='GeoJSON')
 # 25203
 
 # merging count of demos and builds per community area into comm area
-
 demo_count = demo_perm_df.groupby(by=["comm_area"]).size().reset_index()
 demo_count = demo_count.rename(columns = {0: "demos"})
 build_count = build_perm_df.groupby(by=["comm_area"]).size().reset_index()
@@ -57,4 +56,4 @@ comm_areas = comm_areas.merge(demo_count, left_on='area_num', right_on='comm_are
 comm_areas = comm_areas.merge(build_count, left_on='area_num', right_on='comm_area')
 comm_areas = comm_areas.drop(columns=["comm_area_x", "comm_area_y"])
 
-build_perm_df.to_file("joined_perm.geojson", driver='GeoJSON')
+comm_areas.to_file("ca_w_perm_count.geojson", driver='GeoJSON')
