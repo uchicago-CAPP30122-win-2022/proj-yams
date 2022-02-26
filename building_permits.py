@@ -18,25 +18,14 @@ LATITUDE, LONGITUDE, LOCATION"""
 
 client = Socrata("data.cityofchicago.org", "goD601SLndI51xcMq1KsnG6np", username = "marcdloeb@gmail.com", password = "2522-Haphazard")
 
-demo_results = client.get("ydr8-5enu", where = 'permit_type = "PERMIT - WRECKING/DEMOLITION"', 
-                    select = cols, limit=20000)
-demo_df = pd.DataFrame.from_records(demo_results)
-# total 18929
-
-build_results = client.get("ydr8-5enu", where = 'permit_type = "PERMIT - NEW CONSTRUCTION"', 
-                    select = cols, limit=30000)
-build_df = pd.DataFrame.from_records(build_results)
-# total 25414
-
 permit_results = client.get("ydr8-5enu", where = f'PERMIT_TYPE in {permit_types}', 
-                    select = cols, limit=500)
+                    select = cols, limit=45000)
 perm_df = pd.DataFrame.from_records(permit_results)
-# don't worry Marc you get the demolitions too, they just appear later
 # 44343 total
+# demo: total 18929
+# build: total 25414
 
-
-
-col_names = {"ID" : "id", "PERMIT_" : "num", "PERMIT_TYPE" : "type", 
+col_names = {"ID" : "id", "PERMIT_" : "perm_num", "PERMIT_TYPE" : "perm_type", 
 "APPLICATION_START_DATE" : "app_date", "STREET_NUMBER" : "st_num", 
 "STREET_DIRECTION" : "st_dir", "STREET_NAME" : "st_name", 
 "SUFFIX" : "st_suffix", "WORK_DESCRIPTION" : "work_desc", 
@@ -58,9 +47,6 @@ perm_df_nogeo = perm_df[perm_df["location"].isna()]
 perm_df_geo = perm_df[perm_df["location"].notna()]
 
 # geocoding
-#test_addr = "2946 N HOYNE AVE Chicago IL"
-#test_code = Nominatim(user_agent = "marc_cs_proj").geocode(test_addr)
-
 locator = Nominatim(user_agent="marc_cs_proj")
 geocode = RateLimiter(locator.geocode, min_delay_seconds=1)
 
@@ -74,16 +60,14 @@ for i, vals in perm_df_nogeo.iterrows():
         # changed it to :, (i, "lon"), but that made it even worse
         print(gcode.latitude, gcode.longitude)
 
-# removing records that could not be geocoded
 perm_df_nogeo = perm_df_nogeo[perm_df_nogeo.lat.notna()]
 
-# combining geocoded permits with the permits that had coordinates in first place
 perm_df_coded = pd.concat([perm_df_nogeo, perm_df_geo], axis=0)
+# len 44044
 
 # creating a geodataframe, converting lat and lon into coords
 geo_perm_df = gpd.GeoDataFrame(
     perm_df_coded, geometry=gpd.points_from_xy(perm_df_coded.lon, perm_df_coded.lat))
 
-#saving GeoDataFrame as a geojson
-geo_perm_df.to_file("permits_1000.geojson", driver='GeoJSON')
+geo_perm_df.to_file("permits.geojson", driver='GeoJSON')
 
