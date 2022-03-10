@@ -16,7 +16,7 @@ REPORTED_COST, COMMUNITY_AREA, CENSUS_TRACT, XCOORDINATE, YCOORDINATE,
 LATITUDE, LONGITUDE, LOCATION"""
 
 
-client = Socrata("data.cityofchicago.org", "goD601SLndI51xcMq1KsnG6np", username = "marcdloeb@gmail.com", password = "2522-Haphazard")
+client = Socrata("data.cityofchicago.org", "goD601SLndI51xcMq1KsnG6np")
 
 permit_results = client.get("ydr8-5enu", where = f'PERMIT_TYPE in {permit_types}', 
                     select = cols, limit=45000)
