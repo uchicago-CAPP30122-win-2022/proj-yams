@@ -1,23 +1,9 @@
 import geopandas as gpd
 import pandas as pd
 
-
-comm_areas = get_geo_comm_areas()
-# comm area max of 77, min of 1, len of 77
-
-perm_df = gpd.read_file("permits.geojson")
+perm_df = gpd.read_file("data/permits.geojson")
 # reading in geocoded building permits
 # permits have community area numbers, but no names
-
-demo_perm_df, build_perm_df = geojoin_permits(comm_areas, perm_df)
-
-comm_areas = merge_permits_ca(comm_areas, demo_perm_df, build_perm_df)
-
-census_ca = get_ca_census()
-
-comm_areas = normalize_permit_counts(comm_areas, census_ca)
-
-build_year_count, demo_year_count = permits_per_year(comm_areas, census_ca)
 
 #comm_areas.sort_values(by = ["demo_rate"], ascending=False)
 #comm_areas.sort_values(by = ["build_rate"], ascending=False)
@@ -120,7 +106,7 @@ def get_ca_census():
 def normalize_permit_counts(comm_areas, census_ca):
 
     comm_areas = comm_areas.merge(census_ca, on="area_num")
-    #comm_areas = comm_areas.drop(columns="geog")
+    comm_areas = comm_areas.drop(columns="geog")
 
     # building and demolition rate
     comm_areas["demo_rate"] = comm_areas.demos / comm_areas.tot_pop
@@ -128,7 +114,6 @@ def normalize_permit_counts(comm_areas, census_ca):
     comm_areas["build_val_per_cap"] = comm_areas.tot_build_value / comm_areas.tot_pop
     comm_areas["ave_build_val"] = comm_areas.tot_build_value / comm_areas.builds
     comm_areas["build_per_demo"] = comm_areas.builds/comm_areas.demos
-    comm_areas["change_rate"] = comm_areas.build_rate - comm_areas.demo_rate
 
     return comm_areas
 
@@ -146,20 +131,40 @@ def permits_per_year(comm_areas, census_ca):
 
     return build_year_count, demo_year_count
 
-"""
-        for idx, row in build_year_count.items():
-        print(idx, row)
-        print()
-        print(row/pop.tot_pop.iloc[idx])
-        pop.tot_pop.iloc[1]
+comm_areas = get_geo_comm_areas()
+# comm area max of 77, min of 1, len of 77
+
+demo_perm_df, build_perm_df = geojoin_permits(comm_areas, perm_df)
+
+comm_areas = merge_permits_ca(comm_areas, demo_perm_df, build_perm_df)
+
+census_ca = get_ca_census()
+
+comm_areas = normalize_permit_counts(comm_areas, census_ca)
+
+build_year_count, demo_year_count = permits_per_year(comm_areas, census_ca)
+
+
+
+    #for idx, row in build_year_count.items():
+    #    print(idx, row)
+    #    print()
+    #    print(row/pop.tot_pop.iloc[idx])
+    #    pop.tot_pop.iloc[1]
 
 
     # lots of na
-    build_year_count.divide(pop.tot_pop, axis = 0)
+    #build_year_count.divide(pop.tot_pop, axis = 0)
 
     # new construction value per year
-    build_year_val = build_perm_df.groupby(by=["comm_area", "year"]).sum().unstack()
-    build_year_val = build_year_val.drop(columns=["2004", "2005", "2022"])
-    
-    
-"""
+    #build_year_val = build_perm_df.groupby(by=["comm_area", "year"]).sum().unstack()
+    #build_year_val = build_year_val.drop(columns=["2004", "2005", "2022"])
+
+
+
+#comm_areas.to_file("ca_w_perm_count.geojson", driver='GeoJSON')
+
+#demo_perm_df.to_file("demo_perm.geojson", driver='GeoJSON')
+# 18821
+#build_perm_df.to_file("new_build_perm.geojson", driver='GeoJSON')
+# 25203
