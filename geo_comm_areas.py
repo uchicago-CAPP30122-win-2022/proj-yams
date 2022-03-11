@@ -149,16 +149,3 @@ def permits_per_year(comm_areas, census_ca):
     
     
 """
-
-comm_areas = get_geo_comm_areas()
-# comm area max of 77, min of 1, len of 77
-
-demo_perm_df, build_perm_df = geojoin_permits(comm_areas, perm_df)
-
-comm_areas = merge_permits_ca(comm_areas, demo_perm_df, build_perm_df)
-
-census_ca = get_ca_census()
-
-comm_areas = normalize_permit_counts(comm_areas, census_ca)
-
-build_year_count, demo_year_count = permits_per_year(comm_areas, census_ca)
