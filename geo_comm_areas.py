@@ -2,9 +2,6 @@ import geopandas as gpd
 import pandas as pd
 
 
-comm_areas = get_geo_comm_areas()
-# comm area max of 77, min of 1, len of 77
-
 perm_df = gpd.read_file("permits.geojson")
 # reading in geocoded building permits
 # permits have community area numbers, but no names
@@ -12,7 +9,6 @@ perm_df = gpd.read_file("permits.geojson")
 #comm_areas.sort_values(by = ["demo_rate"], ascending=False)
 #comm_areas.sort_values(by = ["build_rate"], ascending=False)
 #comm_areas.sort_values(by = ["build_per_demo"], ascending=False)
-
 
 # reading in community areas
 def get_geo_comm_areas():
@@ -153,6 +149,9 @@ def permits_per_year(comm_areas, census_ca):
     
     
 """
+
+comm_areas = get_geo_comm_areas()
+# comm area max of 77, min of 1, len of 77
 
 demo_perm_df, build_perm_df = geojoin_permits(comm_areas, perm_df)
 
