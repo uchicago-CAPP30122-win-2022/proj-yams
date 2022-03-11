@@ -77,7 +77,7 @@ def merge_permits_ca(comm_areas, demo_perm_df, build_perm_df):
                             left_on='area_num', right_on='comm_area')
 
     # total value of new construction
-    build_total_value = build_perm_df.groupby(by=["comm_area"]).sum().reset_index()
+    build_total_value = build_perm_df.groupby(by=["comm_area"])["work_cost"].sum().reset_index()
     build_total_value = build_total_value.rename(columns={"work_cost": "tot_build_value"})
     comm_areas = comm_areas.merge(build_total_value,
                             left_on='area_num', right_on='comm_area')
@@ -93,7 +93,8 @@ def get_ca_census():
     census_url = "https://datahub.cmap.illinois.gov/dataset/1d2dd970-f0a6-4736-96a1-3caeb431f5e4/resource/0916f1de-ae37-4476-bf4e-6485ba08c975/download/Census2020SupplementCCA.csv"
     census_ca = pd.read_csv(census_url)
     census_ca = census_ca.rename(columns=str.lower).rename(columns={
-        "geoid": "area_num", "hu_tot": "total_homes", "vac_hu": "vac_homes"})
+                    "geog": "community", "geoid": "area_num", 
+                    "hu_tot": "total_homes", "vac_hu": "vac_homes"})
     census_ca["vac_rate"] = 100 * census_ca.vac_homes / census_ca.total_homes
     census_ca["hisp_per"] = 100 * census_ca.hisp / census_ca.tot_pop
     census_ca["white_per"] = 100 * census_ca.white / census_ca.tot_pop
@@ -118,7 +119,8 @@ def normalize_permit_counts(comm_areas, census_ca):
 
     return comm_areas
 
-def permits_per_year(comm_areas, census_ca):
+
+def permits_per_year(comm_areas, build_perm_df, demo_perm_df):
 
     pop = comm_areas[['community', 'area_num', 'geometry', 'tot_pop']]
 
@@ -130,22 +132,24 @@ def permits_per_year(comm_areas, census_ca):
     demo_year_count = demo_perm_df.groupby(by=["comm_area", "year"]).size().unstack()
     demo_year_count = demo_year_count.drop(columns=["2005", "2022"])
 
-    return build_year_count, demo_year_count
-
-"""
-        for idx, row in build_year_count.items():
-        print(idx, row)
-        print()
-        print(row/pop.tot_pop.iloc[idx])
-        pop.tot_pop.iloc[1]
-
+    # new construction value per year
+    build_year_val = build_perm_df.groupby(by=["comm_area", "year"])["work_cost"].sum().unstack()
+    build_year_val = build_year_val.drop(columns=["2004", "2005", "2022"])
 
     # lots of na
-    build_year_count.divide(pop.tot_pop, axis = 0)
+    #build_year_count.divide(pop.tot_pop, axis = 0)
 
-    # new construction value per year
-    build_year_val = build_perm_df.groupby(by=["comm_area", "year"]).sum().unstack()
-    build_year_val = build_year_val.drop(columns=["2004", "2005", "2022"])
-    
-    
-"""
+
+    #def per_capita(df, census_ca):
+
+    #    pop = census_ca[['geog', 'area_num', 'geometry', 'tot_pop']]
+
+    #    df = df.drop(columns=["2004", "2005", "2022"])
+
+    #    df.merge(census_ca, left_on='comm_area', right_on='area_num')
+
+    return build_year_count, demo_year_count, build_year_val
+
+#build_year_count.to_csv("build_year_count.csv")
+#census_ca.to_csv("census_ca.csv")
+
