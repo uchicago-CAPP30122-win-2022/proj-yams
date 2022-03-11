@@ -9,16 +9,6 @@ perm_df = gpd.read_file("permits.geojson")
 # reading in geocoded building permits
 # permits have community area numbers, but no names
 
-demo_perm_df, build_perm_df = geojoin_permits(comm_areas, perm_df)
-
-comm_areas = merge_permits_ca(comm_areas, demo_perm_df, build_perm_df)
-
-census_ca = get_ca_census()
-
-comm_areas = normalize_permit_counts(comm_areas, census_ca)
-
-build_year_count, demo_year_count = permits_per_year(comm_areas, census_ca)
-
 #comm_areas.sort_values(by = ["demo_rate"], ascending=False)
 #comm_areas.sort_values(by = ["build_rate"], ascending=False)
 #comm_areas.sort_values(by = ["build_per_demo"], ascending=False)
@@ -163,3 +153,13 @@ def permits_per_year(comm_areas, census_ca):
     
     
 """
+
+demo_perm_df, build_perm_df = geojoin_permits(comm_areas, perm_df)
+
+comm_areas = merge_permits_ca(comm_areas, demo_perm_df, build_perm_df)
+
+census_ca = get_ca_census()
+
+comm_areas = normalize_permit_counts(comm_areas, census_ca)
+
+build_year_count, demo_year_count = permits_per_year(comm_areas, census_ca)
