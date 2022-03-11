@@ -1,6 +1,4 @@
 import geopandas as gpd
-import pygeos
-import pandas as pd
 import geo_comm_areas as gca
 
 comm_areas = gca.get_geo_comm_areas()
@@ -14,7 +12,8 @@ demo_perm_df, build_perm_df = gca.geojoin_permits(comm_areas, perm_df)
 comm_areas = gca.merge_permits_ca(comm_areas, demo_perm_df, build_perm_df)
 census_ca = gca.get_ca_census()
 comm_areas = gca.normalize_permit_counts(comm_areas, census_ca)
-build_year_count, demo_year_count, build_year_val = gca.permits_per_year(comm_areas, build_perm_df, demo_perm_df)
+build_year_count, demo_year_count, build_year_val = gca.permits_per_year(
+                                    comm_areas, build_perm_df, demo_perm_df)
 
 """
 finished datasets from the above functions
