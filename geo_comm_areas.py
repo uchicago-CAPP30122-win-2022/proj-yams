@@ -1,4 +1,5 @@
 import geopandas as gpd
+import pandas as pd
 
 
 # reading in community areas

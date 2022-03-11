@@ -1,4 +1,5 @@
 import geopandas as gpd
+import pandas as pd
 import geo_comm_areas as gca
 
 comm_areas = gca.get_geo_comm_areas()
