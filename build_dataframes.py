@@ -16,40 +16,40 @@ build_year_count, demo_year_count, build_year_val = gca.permits_per_year(
                                     comm_areas, build_perm_df, demo_perm_df)
 
 """
-finished datasets from the above functions
+    finished datasets from the above functions
 
-demo_perm_df
+    demo_perm_df
 
-    A geopandas dataframe of length 18821
-    Contains the geocoded permits for "WRECKING/DEMOLITION" with filled
-    in community area numbers for permits originally missing it
-
-
-build_perm_df
-
-    A geopandas dataframe of length 25201
-    Contains the geocoded permits for "NEW CONSTRUCTION" with filled
-    in community area numbers for permits originally missing it
+        A geopandas dataframe of length 18821
+        Contains the geocoded permits for "WRECKING/DEMOLITION" with filled
+        in community area numbers for permits originally missing it
 
 
-census_ca
+    build_perm_df
 
-    A pandas dataframe, with census data on population, race and
-    housing for each of Chicago's 77 community areas
+        A geopandas dataframe of length 25201
+        Contains the geocoded permits for "NEW CONSTRUCTION" with filled
+        in community area numbers for permits originally missing it
 
 
-comm_areas
+    census_ca
 
-    A pandas dataframe, with rows for each of Chicago's 77 community areas
+        A pandas dataframe, with census data on population, race and
+        housing for each of Chicago's 77 community areas
 
-    Columns of note:
-        'demo_rate'
-        'build_rate'
-        'build_per_demo'
-        'ave_build_val'
-        'change_rate'
 
-build_year_count, demo_year_count, 
+    comm_areas
+
+        A pandas dataframe, with rows for each of Chicago's 77 community areas
+
+        Columns of note:
+            'demo_rate'
+            'build_rate'
+            'build_per_demo'
+            'ave_build_val'
+            'change_rate'
+
+    build_year_count, demo_year_count, 
 
 
 """
