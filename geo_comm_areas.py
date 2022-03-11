@@ -2,7 +2,7 @@ import geopandas as gpd
 import pandas as pd
 
 
-perm_df = gpd.read_file("permits.geojson")
+perm_df = gpd.read_file("data/permits.geojson")
 # reading in geocoded building permits
 # permits have community area numbers, but no names
 
