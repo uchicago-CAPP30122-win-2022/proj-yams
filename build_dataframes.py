@@ -13,8 +13,22 @@ demo_perm_df, build_perm_df = gca.geojoin_permits(comm_areas, perm_df)
 comm_areas = gca.merge_permits_ca(comm_areas, demo_perm_df, build_perm_df)
 census_ca = gca.get_ca_census()
 comm_areas = gca.normalize_permit_counts(comm_areas, census_ca)
-build_year_count, demo_year_count, build_year_val = gca.permits_per_year(
-                                    comm_areas, build_perm_df, demo_perm_df)
+#build_year_count, demo_year_count, build_year_val = gca.permits_per_year(
+#                                    comm_areas, build_perm_df, demo_perm_df)
+
+pop = comm_areas[['community', 'area_num', 'geometry', 'tot_pop']]
+
+# new construction per year per 1000 people
+build_year_count = build_perm_df.groupby(by=["comm_area", "year"]).size().unstack()
+build_year_count = gca.per_capita(build_year_count, pop, 1000)
+
+# demolition per year per 1000 people
+demo_year_count = demo_perm_df.groupby(by=["comm_area", "year"]).size().unstack()
+demo_year_count = gca.per_capita(demo_year_count, pop, 1000)
+
+# new construction value per year
+build_year_val = build_perm_df.groupby(by=["comm_area", "year"])["work_cost"].sum().unstack()
+build_year_val = gca.per_capita(build_year_val, pop, 1)
 
 """
     finished datasets from the above functions
@@ -51,6 +65,8 @@ build_year_count, demo_year_count, build_year_val = gca.permits_per_year(
             'change_rate'
 
     build_year_count, demo_year_count, 
+
+
 
 
 """

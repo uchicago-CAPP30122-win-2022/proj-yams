@@ -85,7 +85,7 @@ def get_ca_census():
     census_url = "https://datahub.cmap.illinois.gov/dataset/1d2dd970-f0a6-4736-96a1-3caeb431f5e4/resource/0916f1de-ae37-4476-bf4e-6485ba08c975/download/Census2020SupplementCCA.csv"
     census_ca = pd.read_csv(census_url)
     census_ca = census_ca.rename(columns=str.lower).rename(columns={
-                    "geog": "community", "geoid": "area_num", 
+                    "geog": "comm_name", "geoid": "area_num", 
                     "hu_tot": "total_homes", "vac_hu": "vac_homes"})
     census_ca["vac_rate"] = 100 * census_ca.vac_homes / census_ca.total_homes
     census_ca["hisp_per"] = 100 * census_ca.hisp / census_ca.tot_pop
@@ -112,32 +112,34 @@ def normalize_permit_counts(comm_areas, census_ca):
     return comm_areas
 
 
+"""
 def permits_per_year(comm_areas, build_perm_df, demo_perm_df):
 
     pop = comm_areas[['community', 'area_num', 'geometry', 'tot_pop']]
 
     # new construction per year per 1000 people
     build_year_count = build_perm_df.groupby(by=["comm_area", "year"]).size().unstack()
-    build_year_count = per_capita(build_year_count, pop)
+    build_year_count = per_capita(build_year_count, pop, 1000)
 
     # demolition per year per 1000 people
     demo_year_count = demo_perm_df.groupby(by=["comm_area", "year"]).size().unstack()
-    demo_year_count = per_capita(demo_year_count, pop)
+    demo_year_count = per_capita(demo_year_count, pop, 1000)
 
-    # new construction value per year per 1000 people
+    # new construction value per year
     build_year_val = build_perm_df.groupby(by=["comm_area", "year"])["work_cost"].sum().unstack()
-    build_year_val = per_capita(build_year_val, pop)
+    build_year_val = per_capita(build_year_val, pop, 1)
 
     return build_year_count, demo_year_count, build_year_val
 
+"""
 
-def per_capita(df, pop):
+def per_capita(df, pop, unit_size):
 
     years_lst = ['2006', '2007', '2008', '2009', '2010', '2011', '2012', 
     '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021']
 
     df = df.drop(columns=["2004", "2005", "2022"], errors='ignore')
     df = df.merge(pop, left_on='comm_area', right_on='area_num')
-    df[years_lst] = df[years_lst].div(df.tot_pop, axis=0).mul(1000)
+    df[years_lst] = df[years_lst].div(df.tot_pop, axis=0).mul(unit_size)
 
     return df
