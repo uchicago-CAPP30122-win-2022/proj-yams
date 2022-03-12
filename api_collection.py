@@ -4,8 +4,8 @@ from sodapy import Socrata
 
 
 id_dict = {
-    "red light violations": "spqx-js37", "abandoned buildings": "kc9i-wq85",
-    "socioeconomic indicators": "kn9c-c2s2", "hardship index": "792q-4jtu",
+    "red light violations": "spqx-js37",
+    "socioeconomic indicators": "kn9c-c2s2",
     "crimes": "ijzp-q8t2", "grocery stores": "4u6w-irs9"}
 
 
@@ -21,7 +21,7 @@ def generate_final_df():
     '''
     for data_name, data_id in id_dict.items():
         if data_name == "crimes":
-            #call helper function which returns clean socioeconomic df
+            crime_df = process_crime(data_id)
             #merge with Marc's df
             pass  
 
@@ -36,22 +36,44 @@ def generate_final_df():
 
 
 
-def pull_data(dataset_id, limit):
+def pull_data(dataset_id, lim):
     '''
     Given a dataset id, pull out data from Chicago portal API
 
     Inputs:
       dataset_id: (str) a unique id for one Chicago portal dataset
-      limit: (int) number of rows to pull each time, default to None
+      lim: (int) number of rows to pull each time, default to None
 
     Return:
       (Pandas DataFrame) a dataframe pulled from Chicago Portal
     '''
+
     client = Socrata("data.cityofchicago.org", "goD601SLndI51xcMq1KsnG6np")
 
-    results = client.get(dataset_id, limit)
+    #special case to pull crimes data: filtering for homocide crimes
+    if dataset_id == id_dict["crimes"]:
+        results = client.get(id_dict["crimes"], where = f"(primary_type) = 'HOMICIDE'",
+                    limit=1000000)    
+    
+    else:
+        results = client.get(dataset_id, limit= lim)
+    
     return pd.DataFrame.from_records(results)
 
+
+def process_crime(dataset_id):
+    '''
+    Helper function to clean crime dataset
+    '''
+    crime_df = pull_data(dataset_id, None)
+    
+    #summarize data by community area and year & replace NA values
+    crime_year_count = crime_df.groupby(by=['community_area', \
+        "year"]).size().unstack().fillna(0)
+    crime_year_count['Average Homicide'] = crime_year_count.mean(axis=1)
+    crime_year_count['area_num'] = crime_year_count.index 
+
+    return crime_year_count.melt('area_num')
 
 """
 def assert_valid_input(d):

@@ -169,10 +169,6 @@ def normalize_permit_counts(comm_areas, census_ca):
     """
 
     comm_areas = comm_areas.merge(census_ca, on="area_num")
-<<<<<<< HEAD
-    comm_areas = comm_areas.drop(columns="geog")
-=======
->>>>>>> dc46b760f25c7563a04ad76ed033b07d8d038e83
 
     # building and demolition rate
     comm_areas["demo_rate"] = comm_areas.demos / comm_areas.tot_pop
@@ -216,9 +212,6 @@ def per_capita(df, pop, unit_size):
     df = df.merge(pop, left_on='comm_area', right_on='area_num')
     df[years_lst] = df[years_lst].div(df.tot_pop, axis=0).mul(unit_size)
 
-<<<<<<< HEAD
-    return df
-=======
     geodf = gpd.GeoDataFrame(df, crs="EPSG:4326", geometry="geometry")
 
     return geodf
@@ -264,4 +257,3 @@ def permits_per_year(comm_areas, build_perm_df, bsize, demo_perm_df, dsize):
     build_year_val = per_capita(build_year_val, pop, 1)
 
     return build_year_count, demo_year_count, build_year_val
->>>>>>> dc46b760f25c7563a04ad76ed033b07d8d038e83
