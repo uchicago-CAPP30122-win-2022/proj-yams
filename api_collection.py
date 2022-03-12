@@ -64,9 +64,11 @@ def pull_data(dataset_id, lim):
 def process_crime(dataset_id):
     '''
     Helper function to clean crime dataset
+
+    Returns pandas df
     '''
     crime_df = pull_data(dataset_id, None)
-    
+
     #summarize data by community area and year & replace NA values
     crime_year_count = crime_df.groupby(by=['community_area', \
         "year"]).size().unstack().fillna(0)
@@ -74,6 +76,34 @@ def process_crime(dataset_id):
     crime_year_count['area_num'] = crime_year_count.index 
 
     return crime_year_count.melt('area_num')
+
+
+def process_grocery_stores(dataset_id):
+    '''
+    Helper function to clean grocery stores dataset
+
+    Returns pandas df
+    '''
+    grocery_stores = pull_data(dataset_id, 10000)
+
+    groc_count = grocery_stores.groupby(by=['community_area'])\
+        .size().to_frame(name='grocery stores count')
+
+    #filter liquor stores only
+    liquor_stores = grocery_stores[grocery_stores['store_name']\
+        .str.contains('LIQUOR')]
+    liquor_count = liquor_stores.groupby(by=['community_area']).size().\
+        to_frame(name='liquor stores count')
+
+    groceries_df = groc_count.merge(liquor_count, left_on = "community_area",\
+         right_on = "community_area")
+
+    groceries_df['liquor stores percent'] = groceries_df['liquor stores count']\
+        /groceries_df['grocery stores count'] * 100
+
+    groceries_df['year'] = '2011'
+
+    return groceries_df
 
 """
 def assert_valid_input(d):
