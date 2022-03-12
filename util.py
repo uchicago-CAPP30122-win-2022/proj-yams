@@ -108,6 +108,16 @@ def process_socio_indicators(dataset_id):
 
     return socio.set_index(['area_num', 'year'])
 
+
+def melt_permit_data(df):
+    '''
+    Transpose building data 
+    '''
+    df = df.reset_index().melt(id_vars = ['area_num', 'community', 'geometry', 'tot_pop'])
+    df = df.rename(columns={'variable': 'year'}).set_index(['area_num', 'year'])
+
+    return df
+
 """
 def assert_valid_input(d):
     '''
