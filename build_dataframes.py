@@ -1,6 +1,7 @@
 import geopandas as gpd
 import pandas as pd
 import geo_comm_areas as gca
+import util
 
 comm_areas = gca.get_geo_comm_areas()
 # comm area max of 77, min of 1, len of 77
@@ -70,6 +71,25 @@ build_year_count, demo_year_count, build_year_val = gca.permits_per_year(
 
 """
 
-##### TESTING item ######
+#transpose building data 
+build_year_count = util.melt_permit_data(build_year_count)
+build_year_count = build_year_count.rename(columns= \
+    {'value': 'Number built per 10,000 people'})
+
+demo_year_count = util.melt_permit_data(demo_year_count)
+demo_year_count = demo_year_count.rename(columns= \
+    {'value': 'Number demolished per 10,000 people'})
+
+
+#import 3 processed pandas data frames
+crime, grocery, socio = util.generate_crime_grocery_socio_dfs()
+
+
+##### TESTING items ######
 def return_marcs_dfs():
-    return comm_areas, build_year_val
+    return comm_areas, build_year_val, build_year_count, demo_year_count, demo_perm_df
+
+
+def test_modified_marcs_data():
+    return build_year_count, demo_year_count
+
