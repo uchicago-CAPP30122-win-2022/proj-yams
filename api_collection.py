@@ -4,7 +4,6 @@ from sodapy import Socrata
 
 
 id_dict = {
-    "red light violations": "spqx-js37",
     "socioeconomic indicators": "kn9c-c2s2",
     "crimes": "ijzp-q8t2", "grocery stores": "4u6w-irs9"}
 
@@ -19,22 +18,18 @@ def generate_final_df():
     Return:
       merged pandas dataframe containing all the data from the dict 
     '''
+
     for data_name, data_id in id_dict.items():
         if data_name == "crimes":
             crime_df = process_crime(data_id)
-            #merge with Marc's df
-            pass  
 
         elif data_name == "socioeconomic indicators":
-            #call helper function which returns clean socioeconomic df
-            #merge with Marc's df
-            pass 
+            socio = process_socio_indicators(data_id)
 
         elif data_name == "grocery stores":
-            #my function
-            pass
+            grocery_stores = process_grocery_stores(data_id)
 
-
+#merge datasets here
 
 def pull_data(dataset_id, lim):
     '''
@@ -104,6 +99,21 @@ def process_grocery_stores(dataset_id):
     groceries_df['year'] = '2011'
 
     return groceries_df
+
+
+def process_socio_indicators(dataset_id):
+    '''
+    Helper function to clean socio-economic indicators dataset
+
+    Returns pandas df
+    '''
+    socio = pull_data(dataset_id, 1000)
+
+    socio = socio.filter(items=['ca', 'percent_of_housing_crowded', 'hardship_index'])
+    socio['year'] = '2010' 
+    socio = socio.rename(columns={"ca": "area_num"})
+
+    return socio
 
 """
 def assert_valid_input(d):
