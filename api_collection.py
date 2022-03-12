@@ -9,6 +9,33 @@ id_dict = {
     "crimes": "ijzp-q8t2", "grocery stores": "4u6w-irs9"}
 
 
+def generate_final_df():
+    '''
+    Pull all data sets from the City of Chicago portal using API and merge in one file.
+
+    Inputs:
+      id_dict: (dict) a dictionary mapping names of datasets to its unique ids
+    
+    Return:
+      merged pandas dataframe containing all the data from the dict 
+    '''
+    for data_name, data_id in id_dict.items():
+        if data_name == "crimes":
+            #call helper function which returns clean socioeconomic df
+            #merge with Marc's df
+            pass  
+
+        elif data_name == "socioeconomic indicators":
+            #call helper function which returns clean socioeconomic df
+            #merge with Marc's df
+            pass 
+
+        elif data_name == "grocery stores":
+            #my function
+            pass
+
+
+
 def pull_data(dataset_id, limit):
     '''
     Given a dataset id, pull out data from Chicago portal API
@@ -26,6 +53,26 @@ def pull_data(dataset_id, limit):
     return pd.DataFrame.from_records(results)
 
 
+"""
+def assert_valid_input(d):
+    '''
+    Verify the input is from one of the designated datasets, and the
+    values conform to the standards for the regression model.
+
+    Input: d (dictionary) expected dictionary called from ui
+    '''
+
+    assert isinstance(d, dict)
+    acceptable_keys = set(["red light violations", "abandoned buildings",
+    "socioeconomic indicators", "hardship index", "crimes", "grocery stores"])
+    assert set(d.keys()).issubset(acceptable_keys)
+
+    for value in d.values():
+        assert isinstance(value, pd.DataFrame)
+"""
+
+
+"""
 def collect_data(regressors, limit=None):
     '''
     Given the regressors, call function pull_data()
@@ -67,19 +114,5 @@ def collect_data(regressors, limit=None):
         # Join Pandas DataFrames by "Community Area Name"
     
     return reg_table
+"""
 
-def assert_valid_input(d):
-    '''
-    Verify the input is from one of the designated datasets, and the
-    values conform to the standards for the regression model.
-
-    Input: d (dictionary) expected dictionary called from ui
-    '''
-
-    assert isinstance(d, dict)
-    acceptable_keys = set(["red light violations", "abandoned buildings",
-    "socioeconomic indicators", "hardship index", "crimes", "grocery stores"])
-    assert set(d.keys()).issubset(acceptable_keys)
-
-    for value in d.values():
-        assert isinstance(value, pd.DataFrame)

@@ -1,14 +1,6 @@
 import geopandas as gpd
 import pandas as pd
 
-perm_df = gpd.read_file("data/permits.geojson")
-# reading in geocoded building permits
-# permits have community area numbers, but no names
-
-#comm_areas.sort_values(by = ["demo_rate"], ascending=False)
-#comm_areas.sort_values(by = ["build_rate"], ascending=False)
-#comm_areas.sort_values(by = ["build_per_demo"], ascending=False)
-
 
 # reading in community areas
 def get_geo_comm_areas():
@@ -77,7 +69,7 @@ def merge_permits_ca(comm_areas, demo_perm_df, build_perm_df):
                             left_on='area_num', right_on='comm_area')
 
     # total value of new construction
-    build_total_value = build_perm_df.groupby(by=["comm_area"]).sum().reset_index()
+    build_total_value = build_perm_df.groupby(by=["comm_area"])["work_cost"].sum().reset_index()
     build_total_value = build_total_value.rename(columns={"work_cost": "tot_build_value"})
     comm_areas = comm_areas.merge(build_total_value,
                             left_on='area_num', right_on='comm_area')
@@ -93,7 +85,8 @@ def get_ca_census():
     census_url = "https://datahub.cmap.illinois.gov/dataset/1d2dd970-f0a6-4736-96a1-3caeb431f5e4/resource/0916f1de-ae37-4476-bf4e-6485ba08c975/download/Census2020SupplementCCA.csv"
     census_ca = pd.read_csv(census_url)
     census_ca = census_ca.rename(columns=str.lower).rename(columns={
-        "geoid": "area_num", "hu_tot": "total_homes", "vac_hu": "vac_homes"})
+                    "geog": "comm_name", "geoid": "area_num", 
+                    "hu_tot": "total_homes", "vac_hu": "vac_homes"})
     census_ca["vac_rate"] = 100 * census_ca.vac_homes / census_ca.total_homes
     census_ca["hisp_per"] = 100 * census_ca.hisp / census_ca.tot_pop
     census_ca["white_per"] = 100 * census_ca.white / census_ca.tot_pop
@@ -117,54 +110,35 @@ def normalize_permit_counts(comm_areas, census_ca):
 
     return comm_areas
 
-def permits_per_year(comm_areas, census_ca):
+
+"""
+def permits_per_year(comm_areas, build_perm_df, demo_perm_df):
 
     pop = comm_areas[['community', 'area_num', 'geometry', 'tot_pop']]
 
-    # new construction per year
+    # new construction per year per 1000 people
     build_year_count = build_perm_df.groupby(by=["comm_area", "year"]).size().unstack()
-    build_year_count = build_year_count.drop(columns=["2004", "2005", "2022"])
+    build_year_count = per_capita(build_year_count, pop, 1000)
 
-    # demolition per year
+    # demolition per year per 1000 people
     demo_year_count = demo_perm_df.groupby(by=["comm_area", "year"]).size().unstack()
-    demo_year_count = demo_year_count.drop(columns=["2005", "2022"])
-
-    return build_year_count, demo_year_count
-
-comm_areas = get_geo_comm_areas()
-# comm area max of 77, min of 1, len of 77
-
-demo_perm_df, build_perm_df = geojoin_permits(comm_areas, perm_df)
-
-comm_areas = merge_permits_ca(comm_areas, demo_perm_df, build_perm_df)
-
-census_ca = get_ca_census()
-
-comm_areas = normalize_permit_counts(comm_areas, census_ca)
-
-build_year_count, demo_year_count = permits_per_year(comm_areas, census_ca)
-
-
-
-    #for idx, row in build_year_count.items():
-    #    print(idx, row)
-    #    print()
-    #    print(row/pop.tot_pop.iloc[idx])
-    #    pop.tot_pop.iloc[1]
-
-
-    # lots of na
-    #build_year_count.divide(pop.tot_pop, axis = 0)
+    demo_year_count = per_capita(demo_year_count, pop, 1000)
 
     # new construction value per year
-    #build_year_val = build_perm_df.groupby(by=["comm_area", "year"]).sum().unstack()
-    #build_year_val = build_year_val.drop(columns=["2004", "2005", "2022"])
+    build_year_val = build_perm_df.groupby(by=["comm_area", "year"])["work_cost"].sum().unstack()
+    build_year_val = per_capita(build_year_val, pop, 1)
 
+    return build_year_count, demo_year_count, build_year_val
 
+"""
 
-#comm_areas.to_file("ca_w_perm_count.geojson", driver='GeoJSON')
+def per_capita(df, pop, unit_size):
 
-#demo_perm_df.to_file("demo_perm.geojson", driver='GeoJSON')
-# 18821
-#build_perm_df.to_file("new_build_perm.geojson", driver='GeoJSON')
-# 25203
+    years_lst = ['2006', '2007', '2008', '2009', '2010', '2011', '2012', 
+    '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021']
+
+    df = df.drop(columns=["2004", "2005", "2022"], errors='ignore')
+    df = df.merge(pop, left_on='comm_area', right_on='area_num')
+    df[years_lst] = df[years_lst].div(df.tot_pop, axis=0).mul(unit_size)
+
+    return df

@@ -9,7 +9,7 @@ from geopy.geocoders import Nominatim
 from geopy.geocoders import GoogleV3
 import matplotlib
 
-def get_pemits():
+def get_pemits(record_limit = 1000):
     """
     Uses the Socrata API to access the Chciago Open Data Portal's database
     of building permits from 2006 to the present.
@@ -28,7 +28,7 @@ def get_pemits():
 
     permit_results = client.get("ydr8-5enu",
                                 where=f'PERMIT_TYPE in {permit_types}',
-                                select=cols, limit=45000)
+                                select=cols, limit=record_limit)
     perm_df = pd.DataFrame.from_records(permit_results)
 
     col_names = {"ID": "id", "PERMIT_": "perm_num", "PERMIT_TYPE": "perm_type",
@@ -62,11 +62,18 @@ def geocode(perm_df):
     geocode = RateLimiter(locator.geocode, min_delay_seconds=1)
 
     for i, entry in perm_df_nogeo.iterrows():
+        print(f"\nentry number: {i}, permit number: {entry.perm_num}")
+        print(f"street address: {entry.st_addr}")
         gcode = geocode(entry.st_addr)
 
         if gcode:
             perm_df_nogeo.loc[i, "lat"] = gcode.latitude
             perm_df_nogeo.loc[i, "lon"] = gcode.longitude
+            print(f"lat: {gcode.latitude}, lon: {gcode.longitude}")
+
+        else:
+            print("not a valid address")
+
 
     perm_df_nogeo = perm_df_nogeo[perm_df_nogeo.lat.notna()]
     perm_df_coded = pd.concat([perm_df_nogeo, perm_df_geo], axis=0)         # len 44044
@@ -79,5 +86,11 @@ def geocode(perm_df):
     return geo_perm_df
 
 
-def save_as(geo_perm_df, name):
+def save_as(geo_perm_df, name, record_limit):
     geo_perm_df.to_file(name, driver='GeoJSON')
+
+
+perm_df = get_pemits(record_limit = 500)
+geo_perm_df = geocode(perm_df)
+name = "permits_new.geojson"
+
