@@ -113,9 +113,10 @@ def melt_permit_data(df):
     '''
     Transpose building data 
     '''
-    df = df.reset_index().melt(id_vars = ['area_num', 'community', 'geometry', 'tot_pop'])
-    df = df.rename(columns={'variable': 'year'}).set_index(['area_num', 'year'])
-
+    #df = df.reset_index().melt(id_vars = ['area_num', 'community', 'geometry', 'tot_pop'])
+    df = df.melt(id_vars = ['area_num', 'community', 'geometry', 'tot_pop'])
+    df = df.rename(columns={'variable': 'year'}).set_index(['area_num', 'year']).fillna(0)
+    
     return df
 
 """

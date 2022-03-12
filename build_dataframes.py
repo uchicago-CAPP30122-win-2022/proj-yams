@@ -71,6 +71,10 @@ build_year_count, demo_year_count, build_year_val = gca.permits_per_year(
 
 """
 
+##### TESTING items ######
+def return_marcs_dfs():
+    return comm_areas, build_year_val, build_year_count, demo_year_count, demo_perm_df
+
 #transpose building data 
 build_year_count = util.melt_permit_data(build_year_count)
 build_year_count = build_year_count.rename(columns= \
@@ -83,11 +87,6 @@ demo_year_count = demo_year_count.rename(columns= \
 
 #import 3 processed pandas data frames
 crime, grocery, socio = util.generate_crime_grocery_socio_dfs()
-
-
-##### TESTING items ######
-def return_marcs_dfs():
-    return comm_areas, build_year_val, build_year_count, demo_year_count, demo_perm_df
 
 
 def test_modified_marcs_data():
