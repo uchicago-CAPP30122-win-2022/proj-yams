@@ -213,7 +213,7 @@ def per_capita(df, pop, unit_size):
     df = df.merge(pop, left_on='comm_area', right_on='area_num')
     df[years_lst] = df[years_lst].div(df.tot_pop, axis=0).mul(unit_size)
 
-    geodf = gdp.GeoDataFrame(df, crs="EPSG:4326", geometry=geometry)
+    geodf = gpd.GeoDataFrame(df, crs="EPSG:4326", geometry=geometry)
 
     return geodf
 
