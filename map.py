@@ -4,13 +4,15 @@ import plotly.express as px
 import plotly.graph_objects as go
 from dash import Dash, dcc, html, Input, Output
 import get_data
+import get_geojson
 
 app = Dash(__name__)
 
-#### This part may be wrong?
+#### This part needs help:
+# I need to load a json file from https://data.cityofchicago.org/Facilities-Geographic-Boundaries/Boundaries-Community-Areas-current-/cauq-8yn6
+
 df = get_data.return_df()
-with open("data/permits.geojson") as f:
-    gj = geojson.load(f)
+comm_areas = get_geojson.get_comm_areas()
 
 app.layout = html.Div([
     html.H1("Chicago Crime: Updated Dash", style={'text-align': 'center'}),
@@ -56,16 +58,17 @@ app.layout = html.Div([
     [Input(component_id='slct_year', component_property='value')]
 )
 
-def update_graph(slct_reason, slct_year):
 
-    container = "This is the percentage of bee colonies died of {} in {}".format(slct_reason, slct_year)
+def update_graph(slct_year):
+
+    container = "This is the number of homocide in {}".format(slct_year)
 
     dff = df.copy()
     dff = dff[dff["Year"] == slct_year]
 
     fig = px.choropleth_mapbox(
         data_frame=dff,
-        geojson=gj,
+        geojson=comm_areas,
         locations='area',
         color=df['value'],
         color_continuous_scale="YlOrRd",
@@ -77,7 +80,7 @@ def update_graph(slct_reason, slct_year):
         # center={'lat': 19, 'lon': 11},
         opacity=0.8
         )
-    
+
     return container, fig
 
 if __name__ == '__main__':
