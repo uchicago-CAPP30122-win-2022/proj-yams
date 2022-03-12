@@ -8,28 +8,18 @@ id_dict = {
     "crimes": "ijzp-q8t2", "grocery stores": "4u6w-irs9"}
 
 
-def generate_final_df():
+def generate_crime_grocery_socio_dfs():
     '''
-    Pull all data sets from the City of Chicago portal using API and merge in one file.
-
-    Inputs:
-      id_dict: (dict) a dictionary mapping names of datasets to its unique ids
+    Pull all data sets from the City of Chicago portal using API and returned cleaned datasets.
     
     Return:
       merged pandas dataframe containing all the data from the dict 
     '''
 
-    for data_name, data_id in id_dict.items():
-        if data_name == "crimes":
-            crime_df = process_crime(data_id)
+    return process_crime(id_dict['crimes']), \
+            process_grocery_stores(id_dict['grocery stores']), \
+            process_socio_indicators(id_dict['socioeconomic indicators'])
 
-        elif data_name == "socioeconomic indicators":
-            socio = process_socio_indicators(data_id)
-
-        elif data_name == "grocery stores":
-            grocery_stores = process_grocery_stores(data_id)
-
-#merge datasets here
 
 def pull_data(dataset_id, lim):
     '''
@@ -66,11 +56,13 @@ def process_crime(dataset_id):
 
     #summarize data by community area and year & replace NA values
     crime_year_count = crime_df.groupby(by=['community_area', \
-        "year"]).size().unstack().fillna(0)
+        'year']).size().unstack().fillna(0)
     crime_year_count['Average Homicide'] = crime_year_count.mean(axis=1)
-    crime_year_count['area_num'] = crime_year_count.index 
+    crime_year_count['area_num'] = crime_year_count.index
+    crime_year_count = crime_year_count.melt(id_vars = ['area_num', 'Average Homicide'])
+    crime_year_count = crime_year_count.rename(columns={'value': 'Number of Homicides'})
 
-    return crime_year_count.melt('area_num')
+    return crime_year_count.set_index(['area_num', 'year'])
 
 
 def process_grocery_stores(dataset_id):
@@ -81,24 +73,25 @@ def process_grocery_stores(dataset_id):
     '''
     grocery_stores = pull_data(dataset_id, 10000)
 
-    groc_count = grocery_stores.groupby(by=['community_area'])\
+    grocery_stores = grocery_stores.rename(columns={'community_area': 'area_num'})
+    groc_count = grocery_stores.groupby(by=['area_num'])\
         .size().to_frame(name='grocery stores count')
 
     #filter liquor stores only
     liquor_stores = grocery_stores[grocery_stores['store_name']\
         .str.contains('LIQUOR')]
-    liquor_count = liquor_stores.groupby(by=['community_area']).size().\
+    liquor_count = liquor_stores.groupby(by=['area_num']).size().\
         to_frame(name='liquor stores count')
 
-    groceries_df = groc_count.merge(liquor_count, left_on = "community_area",\
-         right_on = "community_area")
+    groceries_df = groc_count.merge(liquor_count, left_on = 'area_num',\
+         right_on = 'area_num')
 
     groceries_df['liquor stores percent'] = groceries_df['liquor stores count']\
         /groceries_df['grocery stores count'] * 100
 
     groceries_df['year'] = '2011'
 
-    return groceries_df
+    return groceries_df.reset_index().set_index(['area_num', 'year'])
 
 
 def process_socio_indicators(dataset_id):
@@ -111,9 +104,9 @@ def process_socio_indicators(dataset_id):
 
     socio = socio.filter(items=['ca', 'percent_of_housing_crowded', 'hardship_index'])
     socio['year'] = '2010' 
-    socio = socio.rename(columns={"ca": "area_num"})
+    socio = socio.rename(columns={"ca": "area_num"}).dropna()
 
-    return socio
+    return socio.set_index(['area_num', 'year'])
 
 """
 def assert_valid_input(d):

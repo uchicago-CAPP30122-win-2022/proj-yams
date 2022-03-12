@@ -69,3 +69,7 @@ build_year_count, demo_year_count, build_year_val = gca.permits_per_year(
         with built value per capita, per year
 
 """
+
+##### TESTING item ######
+def return_marcs_dfs():
+    return comm_areas, build_year_val
