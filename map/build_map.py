@@ -48,7 +48,7 @@ app.layout = html.Div([
             {"label": '2022', "value": '2022'}
             ],
         multi=False,
-        value=2001,
+        value='2001',
         style={'width': "40%"}
     ),
     html.Div(id='output_container', children=[]),
@@ -83,4 +83,4 @@ def update_graph(slct_year):
     return container, fig
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8055)
+    app.run_server(debug=True, port=8056)
