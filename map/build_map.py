@@ -16,6 +16,8 @@ df = get_data.return_df()
 comm_areas_url = "https://data.cityofchicago.org/api/geospatial/cauq-8yn6?method=export&format=GeoJSON"
 with urlopen(comm_areas_url) as response:
     comm_areas = json.load(response)
+for feature in comm_areas['features']:
+    feature['id'] = feature['properties']['area_numbe']
 
 app.layout = html.Div([
     html.H1("Chicago Crime: Updated Dash", style={'text-align': 'center'}),
@@ -69,20 +71,14 @@ def update_graph(slct_year):
     dff = df.copy()
     dff = dff[dff["year"] == slct_year]
 
-    fig = px.choropleth_mapbox(
-        data_frame=dff,
+    fig = px.choropleth(
+        dff,
+        locations='community area',
         geojson=comm_areas,
-        locations='area',
-        color=df['value'],
-        color_continuous_scale="YlOrRd",
-        range_color=(0, df['value'].max()),
-        hover_name='area',
-        hover_data={'community area': True, 'year': False, 'value': True},
-        mapbox_style='open-street-map',
-        zoom=1,
-        # center={'lat': 19, 'lon': 11},
-        opacity=0.8
-        )
+        color='value',
+        scope='usa')
+
+    fig.update_geos(fitbounds='locations', visible=False)
 
     return container, fig
 
