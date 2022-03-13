@@ -176,7 +176,6 @@ def normalize_permit_counts(comm_areas, census_ca):
     comm_areas["build_val_per_cap"] = comm_areas.tot_build_value / comm_areas.tot_pop
     comm_areas["ave_build_val"] = comm_areas.tot_build_value / comm_areas.builds
     comm_areas["build_per_demo"] = comm_areas.builds/comm_areas.demos
-    comm_areas["change_rate"] = comm_areas.build_rate - comm_areas.demo_rate
 
     return comm_areas
 

@@ -1,6 +1,7 @@
 import geopandas as gpd
 import pandas as pd
 import geo_comm_areas as gca
+import util
 
 comm_areas = gca.get_geo_comm_areas()
 # comm area max of 77, min of 1, len of 77
@@ -69,3 +70,50 @@ build_year_count, demo_year_count, build_year_val = gca.permits_per_year(
         with built value per capita, per year
 
 """
+
+#transpose building data 
+build_year_count = util.melt_permit_data(build_year_count)
+build_year_count = build_year_count.rename(columns= \
+    {'value': 'Number built per 10,000 people'})
+
+demo_year_count = util.melt_permit_data(demo_year_count)
+demo_year_count = demo_year_count.rename(columns= \
+    {'value': 'Number demolished per 10,000 people'})
+
+#modify census data to merge with other data
+census = census_ca[['area_num', 'vac_rate', 'hisp_per', 'white_per', \
+    'black_per', 'asian_per']]
+census['year'] = '2010'
+census = census.set_index(['area_num', 'year'])
+
+#import 3 processed pandas data frames
+crime, grocery, socio = util.generate_crime_grocery_socio_dfs()
+
+def merge_dfs():
+    '''
+    Merge all available pandas data frames into one.
+    
+    Returns pd df.
+    '''
+    #merge building permits data
+    build_demo = build_year_count.merge(demo_year_count[\
+        ['Number demolished per 10,000 people']], how = 'left', on =['area_num', 'year'])
+    build_demo['Number demolished per 10,000 people'] = \
+        build_demo['Number demolished per 10,000 people'].replace(0, 1)
+    build_demo['build ratio'] = build_demo['Number built per 10,000 people']/\
+        build_demo['Number demolished per 10,000 people']
+
+    #merge building permits data with census data
+    build_demo = build_demo.merge(census, how= 'left', on = ['area_num', 'year'])
+
+    #merge the three dataframes for crime, grocery stores, and socio-economic indicators    
+    cgs_data = crime.merge(grocery, how= 'left', on = ['area_num', 'year']).\
+        merge(socio, how= "left", on = ['area_num', 'year'])
+
+    return build_demo, cgs_data
+
+
+##### TESTING items ######
+def return_marcs_dfs():
+    return census, comm_areas
+
