@@ -63,6 +63,8 @@ def process_crime(dataset_id):
     crime_year_count = crime_year_count.rename(columns={'value': 'Number of Homicides'})
 
     return crime_year_count.set_index(['area_num', 'year'])
+    
+    
 
 
 def process_grocery_stores(dataset_id):
@@ -83,8 +85,7 @@ def process_grocery_stores(dataset_id):
     liquor_count = liquor_stores.groupby(by=['area_num']).size().\
         to_frame(name='liquor stores count')
 
-    groceries_df = groc_count.merge(liquor_count, left_on = 'area_num',\
-         right_on = 'area_num')
+    groceries_df = groc_count.merge(liquor_count, how = 'left', on = 'area_num').fillna(0)
 
     groceries_df['liquor stores percent'] = groceries_df['liquor stores count']\
         /groceries_df['grocery stores count'] * 100
@@ -92,6 +93,8 @@ def process_grocery_stores(dataset_id):
     groceries_df['year'] = '2011'
 
     return groceries_df.reset_index().set_index(['area_num', 'year'])
+    
+    
 
 
 def process_socio_indicators(dataset_id):
@@ -107,16 +110,17 @@ def process_socio_indicators(dataset_id):
     socio = socio.rename(columns={"ca": "area_num"}).dropna()
 
     return socio.set_index(['area_num', 'year'])
+    
 
 
 def melt_permit_data(df):
     '''
     Transpose building data 
     '''
-    #df = df.reset_index().melt(id_vars = ['area_num', 'community', 'geometry', 'tot_pop'])
+
     df = df.melt(id_vars = ['area_num', 'community', 'geometry', 'tot_pop'])
     df = df.rename(columns={'variable': 'year'}).set_index(['area_num', 'year']).fillna(0)
-    
+
     return df
 
 """

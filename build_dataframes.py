@@ -71,10 +71,6 @@ build_year_count, demo_year_count, build_year_val = gca.permits_per_year(
 
 """
 
-##### TESTING items ######
-def return_marcs_dfs():
-    return comm_areas, build_year_val, build_year_count, demo_year_count, demo_perm_df
-
 #transpose building data 
 build_year_count = util.melt_permit_data(build_year_count)
 build_year_count = build_year_count.rename(columns= \
@@ -84,11 +80,31 @@ demo_year_count = util.melt_permit_data(demo_year_count)
 demo_year_count = demo_year_count.rename(columns= \
     {'value': 'Number demolished per 10,000 people'})
 
-
 #import 3 processed pandas data frames
 crime, grocery, socio = util.generate_crime_grocery_socio_dfs()
 
+def merge_dfs():
+    '''
+    Merge all available pandas data frames into one.
+    
+    Returns pd df.
+    '''
+    #merge building permits data
+    build_demo = build_year_count.merge(demo_year_count[\
+        ['Number demolished per 10,000 people']], how = 'left', on =['area_num', 'year'])
+    build_demo['Number demolished per 10,000 people'] = \
+        build_demo['Number demolished per 10,000 people'].replace(0, 1)
+    build_demo['build ratio'] = build_demo['Number built per 10,000 people']/\
+        build_demo['Number demolished per 10,000 people']
 
-def test_modified_marcs_data():
-    return build_year_count, demo_year_count
+    #merge the three dataframes for crime, grocery stores, and socio-economic indicators    
+    cgs_data = crime.merge(grocery, how= 'left', on = ['area_num', 'year']).\
+        merge(socio, how= "left", on = ['area_num', 'year'])
+
+    return build_demo, cgs_data
+
+
+##### TESTING items ######
+def return_marcs_dfs():
+    return comm_areas, build_year_val, build_year_count, demo_year_count, demo_perm_df
 
