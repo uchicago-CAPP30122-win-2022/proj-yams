@@ -80,6 +80,12 @@ demo_year_count = util.melt_permit_data(demo_year_count)
 demo_year_count = demo_year_count.rename(columns= \
     {'value': 'Number demolished per 10,000 people'})
 
+#modify census data to merge with other data
+census = census_ca[['area_num', 'vac_rate', 'hisp_per', 'white_per', \
+    'black_per', 'asian_per']]
+census['year'] = '2010'
+census = census.set_index(['area_num', 'year'])
+
 #import 3 processed pandas data frames
 crime, grocery, socio = util.generate_crime_grocery_socio_dfs()
 
@@ -97,6 +103,9 @@ def merge_dfs():
     build_demo['build ratio'] = build_demo['Number built per 10,000 people']/\
         build_demo['Number demolished per 10,000 people']
 
+    #merge building permits data with census data
+    build_demo = build_demo.merge(census, how= 'left', on = ['area_num', 'year'])
+
     #merge the three dataframes for crime, grocery stores, and socio-economic indicators    
     cgs_data = crime.merge(grocery, how= 'left', on = ['area_num', 'year']).\
         merge(socio, how= "left", on = ['area_num', 'year'])
@@ -106,5 +115,5 @@ def merge_dfs():
 
 ##### TESTING items ######
 def return_marcs_dfs():
-    return comm_areas, build_year_val, build_year_count, demo_year_count, demo_perm_df
+    return census, comm_areas
 
