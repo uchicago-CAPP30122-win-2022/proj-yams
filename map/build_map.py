@@ -1,18 +1,21 @@
 import pandas as pd
-import geojson
+import json
 import plotly.express as px
 import plotly.graph_objects as go
 from dash import Dash, dcc, html, Input, Output
+from urllib.request import urlopen
 import get_data
-import get_geojson
+
 
 app = Dash(__name__)
 
-#### This part needs help:
-# I need to load a json file from https://data.cityofchicago.org/Facilities-Geographic-Boundaries/Boundaries-Community-Areas-current-/cauq-8yn6
-
+# Load into dataframe
 df = get_data.return_df()
-comm_areas = get_geojson.get_comm_areas()
+
+# Load into geojson data as dictionary
+comm_areas_url = "https://data.cityofchicago.org/api/geospatial/cauq-8yn6?method=export&format=GeoJSON"
+with urlopen(comm_areas_url) as response:
+    comm_areas = json.load(response)
 
 app.layout = html.Div([
     html.H1("Chicago Crime: Updated Dash", style={'text-align': 'center'}),
@@ -64,7 +67,7 @@ def update_graph(slct_year):
     container = "This is the number of homocide in {}".format(slct_year)
 
     dff = df.copy()
-    dff = dff[dff["Year"] == slct_year]
+    dff = dff[dff["year"] == slct_year]
 
     fig = px.choropleth_mapbox(
         data_frame=dff,
