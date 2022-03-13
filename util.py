@@ -54,6 +54,7 @@ def process_crime(dataset_id):
     '''
     crime_df = pull_data(dataset_id, None)
 
+
     #summarize data by community area and year & replace NA values
     crime_year_count = crime_df.groupby(by=['community_area', \
         'year']).size().unstack().fillna(0)
@@ -65,7 +66,6 @@ def process_crime(dataset_id):
     return crime_year_count.set_index(['area_num', 'year'])
     
     
-
 
 def process_grocery_stores(dataset_id):
     '''

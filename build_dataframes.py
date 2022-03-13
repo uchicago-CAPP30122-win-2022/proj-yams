@@ -105,12 +105,14 @@ def merge_dfs():
 
     #merge building permits data with census data
     build_demo = build_demo.merge(census, how= 'left', on = ['area_num', 'year'])
+    build_demo = build_demo.reset_index()
+    build_demo['area_num'] = build_demo['area_num'].astype(str)
 
     #merge the three dataframes for crime, grocery stores, and socio-economic indicators    
     cgs_data = crime.merge(grocery, how= 'left', on = ['area_num', 'year']).\
         merge(socio, how= "left", on = ['area_num', 'year'])
 
-    return build_demo, cgs_data
+    return build_demo.merge(cgs_data, how= 'left', on = ['area_num', 'year'])
 
 
 ##### TESTING items ######
