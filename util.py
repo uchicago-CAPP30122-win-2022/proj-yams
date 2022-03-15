@@ -38,8 +38,7 @@ def pull_data(dataset_id, lim):
     #special case to pull crimes data: filtering for homocide crimes
     if dataset_id == id_dict["crimes"]:
         results = client.get(id_dict["crimes"], where = f"(primary_type) = 'HOMICIDE'",
-                    limit=1000000)    
-    
+                    limit=1000000)        
     else:
         results = client.get(dataset_id, limit= lim)
     
@@ -63,9 +62,7 @@ def process_crime(dataset_id):
     crime_year_count = crime_year_count.rename(columns={'value': 'Number of Homicides'})
 
     return crime_year_count.set_index(['area_num', 'year'])
-    
-    
-
+      
 
 def process_grocery_stores(dataset_id):
     '''
@@ -95,8 +92,6 @@ def process_grocery_stores(dataset_id):
     return groceries_df.reset_index().set_index(['area_num', 'year'])
     
     
-
-
 def process_socio_indicators(dataset_id):
     '''
     Helper function to clean socio-economic indicators dataset
@@ -112,77 +107,21 @@ def process_socio_indicators(dataset_id):
     return socio.set_index(['area_num', 'year'])
     
 
-
 def melt_permit_data(df):
     '''
     Transpose building data 
     '''
-
     df = df.melt(id_vars = ['area_num', 'community', 'geometry', 'tot_pop'])
     df = df.rename(columns={'variable': 'year'}).set_index(['area_num', 'year']).fillna(0)
 
     return df
 
-"""
-def assert_valid_input(d):
+
+def write_csv(df):
     '''
-    Verify the input is from one of the designated datasets, and the
-    values conform to the standards for the regression model.
+    Writes csv from a pandas data frame.
 
-    Input: d (dictionary) expected dictionary called from ui
+    Input: (pd dataframe) df
     '''
-
-    assert isinstance(d, dict)
-    acceptable_keys = set(["red light violations", "abandoned buildings",
-    "socioeconomic indicators", "hardship index", "crimes", "grocery stores"])
-    assert set(d.keys()).issubset(acceptable_keys)
-
-    for value in d.values():
-        assert isinstance(value, pd.DataFrame)
-"""
-
-
-"""
-def collect_data(regressors, limit=None):
-    '''
-    Given the regressors, call function pull_data()
-    and join a Pandas DataFrame
-
-    Inputs:
-      regressors: (dictionary) a dictionary matching dataframes
-      with a list of independent variables from each dataframe.
-      Dataframe with an empty list will has its count aggregated
-      by community area.
-      e.g. regressors = {
-          "red light violations": ["VIOLATIONS"],
-          "abandoned buildings": [],
-          "hardship index": ["PERCENT HOUSEHOLDS BELOW POVERTY", "PER CAPITA INCOME"]
-          }
-      limit:  (int) number of rows to pull each time, default to None
-
-    Return:
-      reg_table: (Pandas DataFrame) a dataframe merging all the
-      regressors as columns, aggregated by community areas.
-    '''
-    assert_valid_input(regressors)
-
-    for table, values in regressors.items():
-        dataset_id = id_dict[table]
-        df = pull_data(dataset_id, limit)
-        # Check if dataframe has column "Community Area Name"
-        # If not, geo-join
-
-        # Check if the values list is empty. If empty, by
-        # default, count number of rows and aggregate count
-        # in joint dataframe
-
-        # If not empty, aggregate the values requested by
-        # each community area
-        if values:
-            for var in values:
-
-        # Join Pandas DataFrames by "Community Area Name"
-    
-    return reg_table
-"""
+    df.to_csv('merged_data.csv')
 
