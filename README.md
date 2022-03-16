@@ -23,6 +23,7 @@ python3 urban_dev_explorer
 
 This executes our dash map with a shell script.
 A popup will direct you to the online Dash map
+PLEASE NOTE: use ctrl c to exit the application.
 
 
 STEPS TO TEST GEOCODING & MERGING DATA PROCESS:
