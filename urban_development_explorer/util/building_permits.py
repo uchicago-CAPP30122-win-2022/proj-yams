@@ -6,10 +6,8 @@ from sodapy import Socrata
 import geopy
 from geopy.extra.rate_limiter import RateLimiter
 from geopy.geocoders import Nominatim
-from geopy.geocoders import GoogleV3
-import matplotlib
 
-def get_pemits():
+def get_pemits(testing=False, save_name="permits_new.geojson", rec_limit=1000):
     """
     Uses the Socrata API to access the Chciago Open Data Portal's database
     of building permits from 2006 to the present.
@@ -28,7 +26,7 @@ def get_pemits():
 
     permit_results = client.get("ydr8-5enu",
                                 where=f'PERMIT_TYPE in {permit_types}',
-                                select=cols, limit=45000)
+                                select=cols, limit=rec_limit)
     perm_df = pd.DataFrame.from_records(permit_results)
 
     col_names = {"ID": "id", "PERMIT_": "perm_num", "PERMIT_TYPE": "perm_type",
@@ -41,43 +39,43 @@ def get_pemits():
             "LOCATION": "location"}
     perm_df = perm_df.rename(columns=col_names)
 
-    return perm_df
-
-
-def geocode(perm_df):
-
     # checking street address columns for na
     street_cols = ["st_num", "st_dir", "st_name", "st_suffix"]
     for col in street_cols: 
         perm_df = perm_df[perm_df[col].notna()]
 
     # creating single street address column
-    perm_df['st_addr'] = perm_df[street_cols].astype(str).agg(' '.join, axis=1) + " Chicago IL"
+    perm_df['st_addr'] = perm_df[street_cols].astype(str).agg(
+                                        ' '.join, axis=1) + " Chicago IL"
 
     perm_df_nogeo = perm_df[perm_df["location"].isna()]
     perm_df_geo = perm_df[perm_df["location"].notna()]
+
+    print(f"there are {len(perm_df_nogeo)} records without coordinates")
 
     # geocoding
     locator = Nominatim(user_agent="marc_cs_proj")
     geocode = RateLimiter(locator.geocode, min_delay_seconds=1)
 
     for i, entry in perm_df_nogeo.iterrows():
+        print(f"\nentry number: {i}, permit number: {entry.perm_num}")
+        print(f"street address: {entry.st_addr}")
         gcode = geocode(entry.st_addr)
 
         if gcode:
             perm_df_nogeo.loc[i, "lat"] = gcode.latitude
             perm_df_nogeo.loc[i, "lon"] = gcode.longitude
+            print(f"lat: {gcode.latitude}, lon: {gcode.longitude}")
+
+        else:
+            print("not a valid address")
 
     perm_df_nogeo = perm_df_nogeo[perm_df_nogeo.lat.notna()]
-    perm_df_coded = pd.concat([perm_df_nogeo, perm_df_geo], axis=0)         # len 44044
+    perm_df_coded = pd.concat([perm_df_nogeo, perm_df_geo], axis=0)
 
     # creating a geodataframe, converting lat and lon into coords
     geo_perm_df = gpd.GeoDataFrame(
         perm_df_coded, geometry=gpd.points_from_xy(
             perm_df_coded.lon, perm_df_coded.lat))
 
-    return geo_perm_df
-
-
-def save_as(geo_perm_df, name):
-    geo_perm_df.to_file(name, driver='GeoJSON')
+    geo_perm_df.to_file(save_name, driver='GeoJSON')
