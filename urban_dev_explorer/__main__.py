@@ -1,12 +1,7 @@
-"test"
-
-"""
-from markovian import app
+from urban_dev_explorer import app
 
 if __name__ == '__main__':
     app.run()
-
-"""
 
 """
 import argparse
@@ -38,7 +33,5 @@ def main():
 
 if __name__ == '__main__':
     main() 
-
-
 
 """
