@@ -10,6 +10,10 @@ and students, who are interested in developing an intuition for the varios
 factors that may affect urban growth and decay.
 
 
+Project Deliverable:
+Our project write-up is in proj-yams/project_deliverables/project_write_up
+
+
 STEPS TO RUN THE APPLICATION:
 
 1. Create & launch a Virtual Environment with Dependencies:
