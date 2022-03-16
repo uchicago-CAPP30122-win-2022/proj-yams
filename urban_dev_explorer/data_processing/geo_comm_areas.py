@@ -43,11 +43,9 @@ def geojoin_permits(comm_areas, perm_df):
     perm_df.day = perm_df.day.str.strip("T00:00:00")
 
     perm_df_wca = perm_df[perm_df["comm_area"].notna()]
-    # len 35075
 
     # permits that are missing community area number, need to be joined
     perm_df_noca = perm_df[perm_df["comm_area"].isna()]
-    # len 8969
     
     # spatial join to find comm area for permits missing it
     perm_df_noca = gpd.sjoin(perm_df_noca, comm_areas, how="inner", op="within")
@@ -60,15 +58,14 @@ def geojoin_permits(comm_areas, perm_df):
     perm_df_coded = pd.concat([perm_df_wca, perm_df_noca], axis=0)
     perm_df_coded = perm_df_coded.astype({"comm_area": 'int16', 
                                             "work_cost": 'float'})
-    # len 44024
+
     perm_df_coded = perm_df_coded[perm_df_coded.comm_area != 0]
 
     demo_perm_df = perm_df_coded[
         perm_df_coded.perm_type == "PERMIT - WRECKING/DEMOLITION"]
-        # len 18821
+
     build_perm_df = perm_df_coded[
         perm_df_coded.perm_type == "PERMIT - NEW CONSTRUCTION"]
-        # len 25201
 
     return (demo_perm_df, build_perm_df)
 
