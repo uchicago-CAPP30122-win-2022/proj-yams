@@ -1,6 +1,7 @@
 import app
 from data_processing.building_permits import get_pemits
 from  data_processing.build_dataframes import run_merge
+import ui.build_map
 import argparse
 
 
@@ -24,8 +25,8 @@ if __name__ == '__main__':
 
     # no test, so just run it
     else:
-        print("run_map")
-        #app.run()
+        ui.build_map
+        
 
 
 
