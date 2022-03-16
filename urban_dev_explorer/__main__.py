@@ -24,4 +24,5 @@ if __name__ == '__main__':
 
     # no test, so just run it
     else:
-        os.system("sh run.sh")
+        print("running_map")
+        os.system("sh ../proj-yams/urban_dev_explorer/run.sh")
