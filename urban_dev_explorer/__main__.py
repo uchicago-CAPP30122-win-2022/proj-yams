@@ -3,6 +3,7 @@ import argparse
 
 if __name__ == '__main__':
 
+# maybe app.py would be the right spot for this. Import?
 
 # this isn't the right place
 
