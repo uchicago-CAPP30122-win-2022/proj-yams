@@ -51,23 +51,26 @@ def get_pemits(testing=False, save_name="permits_new.geojson", rec_limit=1000):
     perm_df_nogeo = perm_df[perm_df["location"].isna()]
     perm_df_geo = perm_df[perm_df["location"].notna()]
 
-    print(f"there are {len(perm_df_nogeo)} records without coordinates")
+    if testing:
+        print(f"There are {len(perm_df_nogeo)} records without coordinates")
 
     # geocoding
     locator = Nominatim(user_agent="marc_cs_proj")
     geocode = RateLimiter(locator.geocode, min_delay_seconds=1)
 
     for i, entry in perm_df_nogeo.iterrows():
-        print(f"\nentry number: {i}, permit number: {entry.perm_num}")
-        print(f"street address: {entry.st_addr}")
+        if testing:
+            print(f"\nentry number: {i}, permit number: {entry.perm_num}")
+            print(f"street address: {entry.st_addr}")
         gcode = geocode(entry.st_addr)
 
         if gcode:
             perm_df_nogeo.loc[i, "lat"] = gcode.latitude
             perm_df_nogeo.loc[i, "lon"] = gcode.longitude
-            print(f"lat: {gcode.latitude}, lon: {gcode.longitude}")
+            if testing:
+                print(f"lat: {gcode.latitude}, lon: {gcode.longitude}")
 
-        else:
+        elif testing:
             print("not a valid address")
 
     perm_df_nogeo = perm_df_nogeo[perm_df_nogeo.lat.notna()]
