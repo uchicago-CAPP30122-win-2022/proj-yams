@@ -7,7 +7,7 @@ import geopy
 from geopy.extra.rate_limiter import RateLimiter
 from geopy.geocoders import Nominatim
 
-def get_pemits(testing=False, save_name="permits_new.geojson", rec_limit=1000):
+def get_pemits(testing=False, save_name="permits_new.geojson", rec_limit=45000):
     """
     Uses the Socrata API to access the Chciago Open Data Portal's database
     of building permits from 2006 to the present.

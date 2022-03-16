@@ -17,7 +17,13 @@ To verify the functionality of the geocoding process, we have provided test code
 
 Simply run the following python code:
 
+python urban_dev_explorer.py --test_geocode
+
 This version of the code is verbose, with a signifigant number of print statements
 to allow you to see the progress of the geocoding process. The name of the output
 file and the number of permits to include in your test can be set to your liking
 but default to 500 and "test_permits.geojson."
+
+
+Testing Merging
+
