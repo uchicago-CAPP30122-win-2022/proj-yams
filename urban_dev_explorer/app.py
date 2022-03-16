@@ -6,7 +6,28 @@ def run():
     print("running")
 
 
+# parser.add_argument('--des', action='store_true', help='Sort the libaries by name in Z to A order (default: ascending order)')
 
+    # this format for arg means that it is False by default if nothing is entered
+
+"""
+group = parser.add_mutually_exclusive_group()
+group.add_argument("--test_geocode", action = action = "store_true")
+group.add_argument("--test_merge", action = "store_true")
+
+
+if args.test_geocode:
+elif args.test_merge:
+
+# no test, so just run it
+else:
+
+
+
+
+
+
+"""
 
 
 
