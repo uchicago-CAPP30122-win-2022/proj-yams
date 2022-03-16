@@ -14,12 +14,12 @@ STEPS TO RUN THE APPLICATION:
 
 1. Create & launch a Virtual Environment with Dependencies:
 
-    bash install.sh
-    source env/bin/activate
+bash install.sh
+source env/bin/activate
 
 2. Run the Apllication:
 
-    python3 urban_dev_explorer
+python3 urban_dev_explorer
 
 This executes our dash map with a shell script.
 A popup will direct you to the online Dash map
@@ -29,7 +29,7 @@ STEPS TO TEST GEOCODING & MERGING DATA PROCESS:
 
 1. Run Testing Geocoding:
 
-    python3 urban_dev_explorer --test_geocode
+python3 urban_dev_explorer --test_geocode
 
 This version of the code is verbose, with a signifigant number of print 
 statements to allow you to see the progress of the geocoding process. A limit of 500 has been added, instead of the full ~44,500 entries. If allowed to run to completion, a file named "perm_new.geojson" will be added to our data directory
@@ -37,7 +37,7 @@ statements to allow you to see the progress of the geocoding process. A limit of
 
 2. Run testing of API extraction, Data Cleaning & Merging process:
 
-    python3 urban_dev_explorer --test_merge
+python3 urban_dev_explorer --test_merge
 
 If allowed to run to completion, a file named "new_map_data.csv"
 will be added to our data directory
