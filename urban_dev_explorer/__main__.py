@@ -2,7 +2,7 @@
 import argparse
 
 if __name__ == '__main__':
-    #app.run()
+
 
 # this isn't the right place
 
@@ -22,6 +22,7 @@ if __name__ == '__main__':
     # no test, so just run it
     else:
         print("run_map")
+        #app.run()
 
 
 
