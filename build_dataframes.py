@@ -71,8 +71,8 @@ build_year_count, demo_year_count, build_year_val = gca.permits_per_year(
 
 """
 
-#transpose building data 
-build_year_count = util.melt_permit_data(build_year_count)
+#transpose building permit data, remove 'geometry' col, rename 'value' col
+build_year_count = util.melt_permit_data(build_year_count).drop(['geometry'], axis=1)
 build_year_count = build_year_count.rename(columns= \
     {'value': 'Number built per 10,000 people'})
 
@@ -80,7 +80,7 @@ demo_year_count = util.melt_permit_data(demo_year_count)
 demo_year_count = demo_year_count.rename(columns= \
     {'value': 'Number demolished per 10,000 people'})
 
-#modify census data to merge with other data
+#modify census data to merge with other datasets 
 census = census_ca[['area_num', 'vac_rate', 'hisp_per', 'white_per', \
     'black_per', 'asian_per']]
 census['year'] = '2010'
@@ -89,7 +89,7 @@ census = census.set_index(['area_num', 'year'])
 #import 3 processed pandas data frames
 crime, grocery, socio = util.generate_crime_grocery_socio_dfs()
 
-def merge_dfs():
+def run_merge(csv_name, test=False):
     '''
     Merge all available pandas data frames into one.
     
@@ -112,10 +112,7 @@ def merge_dfs():
     cgs_data = crime.merge(grocery, how= 'left', on = ['area_num', 'year']).\
         merge(socio, how= "left", on = ['area_num', 'year'])
 
-    return build_demo.merge(cgs_data, how= 'left', on = ['area_num', 'year'])
-
-
-##### TESTING items ######
-def return_marcs_dfs():
-    return census, comm_areas
+    merged_df = build_demo.merge(cgs_data, how= 'left', on = ['area_num', 'year'])
+    
+    merged_df.to_csv(csv_name) 
 
