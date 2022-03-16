@@ -11,7 +11,7 @@ factors that may affect urban growth and decay.
 
 
 Project Deliverable:
-Our project write-up is in proj-yams/project_deliverables/project_write_up
+proj-paper.pdf is in the root directory
 
 
 STEPS TO RUN THE APPLICATION:
