@@ -8,7 +8,7 @@ import plotly.express as px
 # -------------------------- DATA LOADING --------------------------
 
 # This is the processed datframe from Sasha and Anthony:
-df = pd.read_csv('../data/merged_data.csv')
+df = pd.read_csv('urban_dev_explorer/data/merged_data.csv')
 
 # This gets geojson for Chicago city
 comm_areas_url = "https://data.cityofchicago.org/api/geospatial/cauq-8yn6?method=export&format=GeoJSON"
