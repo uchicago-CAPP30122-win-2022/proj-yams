@@ -1,11 +1,8 @@
 #from urban_dev_explorer import app
 import argparse
 
+
 if __name__ == '__main__':
-
-# maybe app.py would be the right spot for this. Import?
-
-# this isn't the right place
 
     parser = argparse.ArgumentParser(description="Test or run main?")
     group = parser.add_mutually_exclusive_group()

@@ -1,9 +1,9 @@
 from urban_dev_explorer.data_processing.building_permits import get_pemits
 import argparse 
 
-def run():
 
-    print("running")
+
+
 
 
 # parser.add_argument('--des', action='store_true', help='Sort the libaries by name in Z to A order (default: ascending order)')
