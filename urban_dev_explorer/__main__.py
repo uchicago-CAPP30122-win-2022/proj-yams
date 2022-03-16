@@ -1,7 +1,6 @@
-import app
+import os
 from data_processing.building_permits import get_pemits
 from  data_processing.build_dataframes import run_merge
-import ui.build_map
 import argparse
 
 
@@ -25,4 +24,4 @@ if __name__ == '__main__':
 
     # no test, so just run it
     else:
-        ######PUT SHELL RUN HERE########
+        os.system("sh run.sh")
