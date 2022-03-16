@@ -8,7 +8,7 @@ id_dict = {
     "crimes": "ijzp-q8t2", "grocery stores": "4u6w-irs9"}
 
 
-def generate_crime_grocery_socio_dfs(test):
+def generate_crime_grocery_socio_dfs(testing):
     '''
     Pull all data sets from the City of Chicago portal using API and returned cleaned datasets.
     
@@ -16,22 +16,27 @@ def generate_crime_grocery_socio_dfs(test):
       merged pandas dataframe containing all the data from the dict 
     '''
 
-    return process_crime(id_dict['crimes']), \
-            process_grocery_stores(id_dict['grocery stores']), \
-            process_socio_indicators(id_dict['socioeconomic indicators'])
+    return process_crime(id_dict['crimes'], testing), \
+            process_grocery_stores(id_dict['grocery stores'], testing), \
+            process_socio_indicators(id_dict['socioeconomic indicators'], testing)
 
 
-def pull_data(dataset_id, lim):
+def pull_data(dataset_id, lim, testing):
     '''
     Given a dataset id, pull out data from Chicago portal API
 
     Inputs:
       dataset_id: (str) a unique id for one Chicago portal dataset
       lim: (int) number of rows to pull each time, default to None
+      testing: (boolean) if set to True, prints progress statements
 
     Return:
       (Pandas DataFrame) a dataframe pulled from Chicago Portal
     '''
+
+    if testing:
+        dataset_name = list(id_dict.keys())[list(id_dict.values()).index(dataset_id)]
+        print(f'Reading in {dataset_name} data now...')
 
     client = Socrata("data.cityofchicago.org", "goD601SLndI51xcMq1KsnG6np")
 
@@ -42,16 +47,21 @@ def pull_data(dataset_id, lim):
     else:
         results = client.get(dataset_id, limit= lim)
     
-    return pd.DataFrame.from_records(results)
+    df = pd.DataFrame.from_records(results)
+
+    if testing:
+        print(f'{dataset_name} data shape: {df.shape}\n')
+
+    return df 
 
 
-def process_crime(dataset_id):
+def process_crime(dataset_id, testing):
     '''
-    Helper function to clean crime dataset
+    Helper function to clean crime dataset.
 
-    Returns pandas df
+    Returns pandas df.
     '''
-    crime_df = pull_data(dataset_id, None)
+    crime_df = pull_data(dataset_id, None, testing)
 
     #summarize data by community area and year & replace NA values
     crime_year_count = crime_df.groupby(by=['community_area', \
@@ -64,13 +74,13 @@ def process_crime(dataset_id):
     return crime_year_count.set_index(['area_num', 'year'])
       
 
-def process_grocery_stores(dataset_id):
+def process_grocery_stores(dataset_id, testing):
     '''
-    Helper function to clean grocery stores dataset
+    Helper function to clean grocery stores dataset.
 
-    Returns pandas df
+    Returns pandas df.
     '''
-    grocery_stores = pull_data(dataset_id, 10000)
+    grocery_stores = pull_data(dataset_id, 10000, testing)
 
     grocery_stores = grocery_stores.rename(columns={'community_area': 'area_num'})
     groc_count = grocery_stores.groupby(by=['area_num'])\
@@ -92,13 +102,13 @@ def process_grocery_stores(dataset_id):
     return groceries_df.reset_index().set_index(['area_num', 'year'])
     
     
-def process_socio_indicators(dataset_id):
+def process_socio_indicators(dataset_id, testing):
     '''
     Helper function to clean socio-economic indicators dataset
 
     Returns pandas df
     '''
-    socio = pull_data(dataset_id, 1000)
+    socio = pull_data(dataset_id, 1000, testing)
 
     socio = socio.filter(items=['ca', 'percent_of_housing_crowded', 'hardship_index'])
     socio['year'] = '2010' 

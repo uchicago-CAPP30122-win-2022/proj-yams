@@ -4,13 +4,23 @@ import urban_dev_explorer.data_processing.geo_comm_areas as gca
 import urban_dev_explorer.data_processing.util as util
 
 
-def run_merge(csv_name, test=False):
+def run_merge(csv_name, testing=False):
     '''
-    Merge all available pandas data frames into one.
-    
-    Returns pd df.
+    Merges all available pandas data sets into one and saves the result
+      into a csv file.
+
+    Inputs: 
+      csv_name: name of csv file that will contain merged dataset.
+      testing: (bool) if the value is True, progress statements will be printed.
     '''
-    build_year_count, demo_year_count, census, crime, grocery, socio = load_data(test)
+
+    build_year_count, demo_year_count, census, crime, grocery, socio = load_data(testing)
+
+    if testing:
+        print('The following datasets are about to be merged:')
+        print('buildings built \nbuildings demolished')
+        print('census demographics data \ncrimes per year \ngrocery stores')
+        print('socio-conomic indicators')
 
     #merge building permits data
     build_demo = build_year_count.merge(demo_year_count[\
@@ -31,22 +41,25 @@ def run_merge(csv_name, test=False):
 
     merged_df = build_demo.merge(cgs_data, how= 'left', on = ['area_num', 'year'])
     
+    if testing:
+        print(f'Merge successful: saving the merged dataset into a csv file named "{csv_name}"')
+
     #create csv file containing merged data
     merged_df.to_csv(csv_name) 
 
 
-def load_data(test):
+def load_data(testing):
     '''
     Loads datasets. 
 
     Inputs: 
-      test (boolean): if True, progress statements will be printed while loading data
+      testing: (bool) if True, progress statements will be printed while loading data.
 
     Returns (tuple): pandas data frames
     '''
 
     # reading in precreated geocoded building permits
-    perm_df = gpd.read_file("data/permits.geojson")
+    perm_df = gpd.read_file("urban_dev_explorer/data/permits.geojson")
 
     # loading community areas geodataframe from API
     comm_areas = gca.get_geo_comm_areas()
@@ -91,8 +104,18 @@ def load_data(test):
 
     """
 
-    build_year_count, demo_year_count, build_year_val = gca.permits_per_year(
+    build_year_count, demo_year_count, _ = gca.permits_per_year(
         comm_areas, build_perm_df, 10000, demo_perm_df, 10000)
+
+    if testing:
+        print('Reading in buildings built data now...')
+        print(f'buildings built data shape: {build_year_count.shape}\n')
+
+        print('Reading in buildings demolished data now...')
+        print(f'buildings demolished data shape: {demo_year_count.shape}\n')
+
+        print('Reading in census demographics data now...')
+        print(f'census demographics data shape: {census_ca.shape}\n')
 
     """
 
@@ -129,6 +152,6 @@ def load_data(test):
     census = census.set_index(['area_num', 'year'])
 
     #import 3 processed pandas data frames
-    crime, grocery, socio = util.generate_crime_grocery_socio_dfs(test)
+    crime, grocery, socio = util.generate_crime_grocery_socio_dfs(testing)
 
     return build_year_count, demo_year_count, census, crime, grocery, socio
