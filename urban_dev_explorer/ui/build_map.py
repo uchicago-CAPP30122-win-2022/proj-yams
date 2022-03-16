@@ -28,7 +28,8 @@ app = Dash(__name__)
 
 app.layout = html.Div([
 
-    html.H1("Chicago Urban Development Explorer", style={'text-align': 'center'}),
+    html.H1("Chicago Urban Development Explorer",
+        style={'text-align': 'center'}),
 
     # ------------- Dropdown Layout -------------
 
@@ -74,9 +75,11 @@ app.layout = html.Div([
             {'label': '# Newly built buildings per 10,000 People',
              'value': 'Number built per 10,000 people'},
             {'label': ' # Demolished buildings per 10,000 People',
-             'value': 'Number demolished per 10,000 people'}],
+             'value': 'Number demolished per 10,000 people'},
+             {'label': 'Build Ratio (built per 10k / demolished per 10k)',
+             'value': 'build ratio'},],
         multi = False,
-        placeholder = 'Select a type of building permits ...',
+        placeholder = 'Select an index for building permits ...',
         style = {})
 ]),
 
@@ -85,11 +88,14 @@ app.layout = html.Div([
         dcc.Dropdown(
         id = "slct_commerce",
         options=[
-            {'label': 'Grocery Stores', 'value': 'grocery stores count'},
-            {'label': 'Liquor Stores', 'value': 'liquor stores count'},
-            {'label': 'Liquor Store / Grocery Store (Ratio)', 'value': 'liquor stores percent'}],
+            {'label': 'Grocery Stores',
+             'value': 'grocery stores count'},
+            {'label': 'Liquor Stores',
+             'value': 'liquor stores count'},
+            {'label': 'Liquor Store / Grocery Store (Ratio)',
+             'value': 'liquor stores percent'}],
         multi = False,
-        placeholder = 'Select a type of local commerce ...',
+        placeholder = 'Select an index for local commerce ...',
         style = {})
 ]),
 
