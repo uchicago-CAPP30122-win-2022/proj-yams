@@ -1,4 +1,6 @@
-#from urban_dev_explorer import app
+from urban_dev_explorer import app
+from urban_dev_explorer.data_processing.building_permits import get_pemits
+from  urban_dev_explorer.data_processing.build_dataframes import run_merge
 import argparse
 
 
@@ -14,8 +16,10 @@ if __name__ == '__main__':
 
     if args.test_geocode:
         print("testing_geocode")
+        get_pemits(testing=True, save_name="permits_new.geojson", rec_limit=1000)
     elif args.test_merge:
         print("testing_merge")
+        run_merge("new_map_data.csv", testing=True)
 
     # no test, so just run it
     else:

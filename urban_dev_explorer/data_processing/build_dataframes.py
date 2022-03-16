@@ -48,7 +48,7 @@ def run_merge(csv_name, testing=False):
     merged_df.to_csv(csv_name) 
 
 
-def load_data(testing):
+def load_data(testing=False):
     '''
     Loads datasets. 
 
