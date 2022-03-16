@@ -11,6 +11,7 @@ def run():
     # this format for arg means that it is False by default if nothing is entered
 
 """
+parser = argparse.ArgumentParset(description="Test or run main?")
 group = parser.add_mutually_exclusive_group()
 group.add_argument("--test_geocode", action = action = "store_true")
 group.add_argument("--test_merge", action = "store_true")

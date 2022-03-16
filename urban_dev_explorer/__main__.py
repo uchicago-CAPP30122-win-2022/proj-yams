@@ -1,7 +1,31 @@
-from urban_dev_explorer import app
+#from urban_dev_explorer import app
+import argparse
 
 if __name__ == '__main__':
-    app.run()
+    #app.run()
+
+# this isn't the right place
+
+    parser = argparse.ArgumentParser(description="Test or run main?")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--test_geocode", action="store_true")
+    group.add_argument("--test_merge", action="store_true")
+
+    args = parser.parse_args()
+
+
+    if args.test_geocode:
+        print("testing_geocode")
+    elif args.test_merge:
+        print("testing_merge")
+
+    # no test, so just run it
+    else:
+        print("run_map")
+
+
+
+
 
 """
 import argparse
