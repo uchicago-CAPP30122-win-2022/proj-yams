@@ -9,6 +9,8 @@ analysis purposes. Intended users are esearchers, professionals,
 and students, who are interested in developing an intuition for the varios
 factors that may affect urban growth and decay.
 
+STEPS TO RUN THE APPLICATION:
+
 
 Creating a Virtual Environment with Dependencies
 
