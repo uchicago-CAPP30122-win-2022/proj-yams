@@ -1,7 +1,7 @@
 import geopandas as gpd
 import pandas as pd
-import urban_dev_explorer.data_processing.geo_comm_areas as gca
-import urban_dev_explorer.data_processing.util as util
+import data_processing.geo_comm_areas as gca # this is correct, ignore pylance
+import data_processing.util as util         # this is correct, ignore pylance
 
 
 def run_merge(csv_name, testing=False):
