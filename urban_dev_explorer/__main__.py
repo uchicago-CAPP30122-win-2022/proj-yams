@@ -1,6 +1,6 @@
-from urban_dev_explorer import app
-from urban_dev_explorer.data_processing.building_permits import get_pemits
-from  urban_dev_explorer.data_processing.build_dataframes import run_merge
+import app
+from data_processing.building_permits import get_pemits
+from  data_processing.build_dataframes import run_merge
 import argparse
 
 
