@@ -8,7 +8,7 @@ id_dict = {
     "crimes": "ijzp-q8t2", "grocery stores": "4u6w-irs9"}
 
 
-def generate_crime_grocery_socio_dfs():
+def generate_crime_grocery_socio_dfs(test):
     '''
     Pull all data sets from the City of Chicago portal using API and returned cleaned datasets.
     
@@ -115,13 +115,3 @@ def melt_permit_data(df):
     df = df.rename(columns={'variable': 'year'}).set_index(['area_num', 'year']).fillna(0)
 
     return df
-
-
-def write_csv(df):
-    '''
-    Writes csv from a pandas data frame.
-
-    Input: (pd dataframe) df
-    '''
-    df.to_csv('merged_data.csv')
-
