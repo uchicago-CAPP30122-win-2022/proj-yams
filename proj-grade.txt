@@ -1,0 +1,67 @@
+Note on the Rubric 
+------------------
+Although some of the grading criteria may appear subjective to you, I was as objective as possible and assigned almost all the grades using checkpoints on the essential parts that we required for the project. 
+
+The soft criterium I used is mostly concentrated on items #2 (Data Analysis) and #3 (Scope and Complexity). The final grade for those items resulted from an evaluation of all the projects as a whole. I also recognized in those rubrics team's effort and dedication. I considered a project more complex if it required different types of skills and used more diverse content we covered in during the quarter (e.g., if the team downloaded and used two ready-to-use data sets VS if the data was constructed using complex webscraping, data cleaning, record linkage, used more advanced data vis packages (e.g., Django, dash, etc.) and everything was stored in a relational SQL database).
+
+Please note that these grades are final! I will not make any grade adjusts unless it is due to an arithmetic error, even if you feel the deduction is too much. Project scores are final. 
+
+As always with assignments, feel free to reach out if you do have any questions about improvement or clarification. Please respond via email if you do have any questions (not on Ed). I will be busy preparing for the next quarter so I may not have a chance to respond right away. 
+
+----------------
+Project Deliverable #3 (Paper Evaluation: 10 % of grade) 
+
+
+Total Points 10 /10
+
+
+Overall Comments: None. Paper fulfilled all requirements. 
+
+
+
+--------------------------
+Project Deliverable #3 (Software Evaluation: 35 % of grade):
+
+    - Project Requirements (See point breakdown below):
+        Points Possible: 70
+        Points Obtained: 62
+
+    - Design & Code Style: 
+        Points Possible: 15
+        Points Obtained: 15
+
+    - Program usability:
+        Points Possible: 15
+        Points Obtained: 15
+
+
+Total Points:  92 / 100 
+
+Breakdown of Project Requirements:       
+	
+  - Fulfills requirement #1: Two Data Sources(Web or API and another source)
+        Points Possible: 15
+        Points Obtained: 15
+
+  - Fulfills requirement #2: Data analysis component
+        Points Possible: 15
+        Points Obtained: 7
+
+  - Fulfills requirement #3: Project Scope & Complexity
+        Points Possible: 10
+        Points Obtained: 10
+
+  - Fulfills requirement #4: Visualization or Textual Component
+        Points Possible: 15
+        Points Obtained: 15
+
+
+  - Fulfills requirement #5,  #6, #7: Project structure and Virtual Environment 
+        Points Possible: 15
+        Points Obtained: 15
+
+
+
+
+
+Overall Comments: Overall I think the project is well done! The structure, and coding, and paper were well organized and structure. My main problem with the project is tha lack of analysis. The majority of the project will bringing together the data and then visualizing that data without further details into what the data actually meant or what you could draw from that data. 
