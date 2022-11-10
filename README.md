@@ -21,7 +21,7 @@ STEPS TO RUN THE APPLICATION:
 bash install.sh
 source env/bin/activate
 
-2. Run the Apllication:
+2. Run the Application:
 
 python3 urban_dev_explorer
 
